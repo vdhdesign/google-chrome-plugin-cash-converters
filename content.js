@@ -47,6 +47,14 @@ function isBuyNowAvailable(price) {
 async function loadSettings() {
   const stored = await chrome.storage.local.get(SETTINGS_KEY);
   buyNowOnlyEnabled = stored[SETTINGS_KEY] ?? false;
+  syncBuyNowOnlyFilterClass();
+}
+
+function syncBuyNowOnlyFilterClass() {
+  document.documentElement.classList.toggle(
+    "cc-buy-now-only-filter",
+    buyNowOnlyEnabled
+  );
 }
 
 function applyBuyNowOnlyFilter(section, available) {
@@ -69,14 +77,33 @@ function refreshBuyNowOnlyFilter() {
   }
 }
 
+function getListingPanel(section) {
+  return section.querySelector(".panel.listing");
+}
+
+function createBuyNowEl() {
+  const tagEl = document.createElement("span");
+  tagEl.className = "cc-buy-now-tag";
+  return tagEl;
+}
+
+function insertBuyNowEl(section, buyNowEl) {
+  const panel = getListingPanel(section);
+  if (panel) {
+    panel.insertBefore(buyNowEl, panel.firstChild);
+    return;
+  }
+
+  section.insertBefore(buyNowEl, section.firstChild);
+}
+
 function renderBuyNowStatus(section, priceEl, price) {
-  if (priceEl.previousElementSibling?.classList.contains("cc-buy-now-price")) {
+  if (section.querySelector(".cc-buy-now-tag")) {
     return;
   }
 
   const available = isBuyNowAvailable(price);
-  const buyNowEl = document.createElement("span");
-  buyNowEl.className = "cc-buy-now-price";
+  const buyNowEl = createBuyNowEl();
 
   if (available) {
     buyNowEl.textContent = `$${price} Buy Now`;
@@ -85,27 +112,24 @@ function renderBuyNowStatus(section, priceEl, price) {
     buyNowEl.textContent = "Buy Now Not Available";
   }
 
-  priceEl.parentNode.insertBefore(buyNowEl, priceEl);
+  insertBuyNowEl(section, buyNowEl);
   section.setAttribute(BUY_NOW_AVAILABLE_ATTR, available ? "true" : "false");
   applyBuyNowOnlyFilter(section, available);
 }
 
-function renderLoading(priceEl) {
-  if (priceEl.previousElementSibling?.classList.contains("cc-buy-now-price")) {
+function renderLoading(section) {
+  if (section.querySelector(".cc-buy-now-tag")) {
     return;
   }
 
-  const loadingEl = document.createElement("span");
-  loadingEl.className = "cc-buy-now-price cc-buy-now-loading";
+  const loadingEl = createBuyNowEl();
+  loadingEl.classList.add("cc-buy-now-loading");
   loadingEl.textContent = "Loading Buy Now…";
-  priceEl.parentNode.insertBefore(loadingEl, priceEl);
+  insertBuyNowEl(section, loadingEl);
 }
 
-function clearLoading(priceEl) {
-  const previous = priceEl.previousElementSibling;
-  if (previous?.classList.contains("cc-buy-now-loading")) {
-    previous.remove();
-  }
+function clearLoading(section) {
+  section.querySelector(".cc-buy-now-loading")?.remove();
 }
 
 async function processListings(listings) {
@@ -114,7 +138,7 @@ async function processListings(listings) {
   }
 
   for (const listing of listings) {
-    renderLoading(listing.priceEl);
+    renderLoading(listing.section);
   }
 
   const items = listings.map(({ listingId, url }) => ({ listingId, url }));
@@ -131,7 +155,7 @@ async function processListings(listings) {
   }
 
   for (const listing of listings) {
-    clearLoading(listing.priceEl);
+    clearLoading(listing.section);
 
     const price = prices[listing.listingId] ?? null;
     renderBuyNowStatus(listing.section, listing.priceEl, price);
@@ -226,6 +250,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 
   buyNowOnlyEnabled = changes[SETTINGS_KEY].newValue ?? false;
+  syncBuyNowOnlyFilterClass();
   refreshBuyNowOnlyFilter();
 });
 

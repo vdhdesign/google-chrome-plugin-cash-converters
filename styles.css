@@ -1,34 +1,35 @@
-.cc-buy-now-price {
-  color: #2e7d32;
+.panel.listing {
+  position: relative;
+}
+
+.cc-buy-now-tag {
+  background: #2e7d32;
+  border-radius: 0 0 4px 0;
+  color: #fff;
+  font-size: 1.2rem;
   font-weight: 600;
-  margin-right: 0.5rem;
+  left: 0;
+  line-height: 1.3;
+  padding: 3px 8px;
+  position: absolute;
+  top: 0;
   white-space: nowrap;
+  z-index: 2;
 }
 
-.cc-buy-now-price::after {
-  color: #999;
-  content: "|";
-  font-weight: 400;
-  margin-left: 0.5rem;
-}
-
-.cc-buy-now-loading {
-  color: #888;
+.cc-buy-now-tag.cc-buy-now-loading {
+  background: #888;
   font-style: italic;
   font-weight: 400;
 }
 
-.cc-buy-now-loading::after {
-  content: none;
-}
-
-.cc-buy-now-unavailable {
-  color: #9e9e9e;
+.cc-buy-now-tag.cc-buy-now-unavailable {
+  background: #9e9e9e;
   font-style: italic;
   font-weight: 500;
 }
 
-[data-listingid].cc-no-buy-now {
+html.cc-buy-now-only-filter [data-listingid].cc-no-buy-now {
   filter: grayscale(100%);
   opacity: 0.3;
   transition: filter 0.2s ease, opacity 0.2s ease;
