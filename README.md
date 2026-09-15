@@ -35,6 +35,10 @@ The extension only runs on `https://shop.cashconverters.co.nz/*`.
 - The background service worker fetches each item's public detail page from Cash Converters and extracts the buy-now price.
 - Prices and your filter preference are cached locally in Chrome storage. Buy-now prices expire after ten minutes. Nothing is sent to external servers.
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
+
 ## Privacy
 
 See [PRIVACY.md](PRIVACY.md) for details on what data the extension handles.

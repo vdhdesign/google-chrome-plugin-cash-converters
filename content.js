@@ -77,6 +77,10 @@ function refreshBuyNowOnlyFilter() {
   }
 }
 
+function getRegularPanel(section) {
+  return section.querySelector(".panel:not(.listing)");
+}
+
 function getListingPanel(section) {
   return section.querySelector(".panel.listing");
 }
@@ -94,7 +98,13 @@ function insertBuyNowEl(section, buyNowEl) {
     return;
   }
 
-  section.insertBefore(buyNowEl, section.firstChild);
+  const regularPanel = getRegularPanel(section);
+  if(!regularPanel)
+  {
+    return;
+  }
+
+  regularPanel.insertBefore(buyNowEl, regularPanel.firstChild);
 }
 
 function renderBuyNowStatus(section, priceEl, price) {
@@ -109,7 +119,7 @@ function renderBuyNowStatus(section, priceEl, price) {
     buyNowEl.textContent = `$${price} Buy Now`;
   } else {
     buyNowEl.classList.add("cc-buy-now-unavailable");
-    buyNowEl.textContent = "Buy Now Not Available";
+    buyNowEl.textContent = "Buy Now Unavailable";
   }
 
   insertBuyNowEl(section, buyNowEl);
