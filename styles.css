@@ -44,10 +44,9 @@
 
 .panel.listing .cc-buy-now-tag {
   margin: 0;
-  border-radius: 0;
-  border-top-right-radius: 6px;
-  border-top-left-radius: 6px;
-  min-width: 150px;
+  margin-bottom: 5px;
+  border-radius: 2px;
+  min-width: initial;
 }
 
 .cc-buy-now-tag.cc-buy-now-loading {
